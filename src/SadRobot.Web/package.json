@@ -1,0 +1,40 @@
+{
+  "name": "sadrobot.gg",
+  "version": "1.0.0",
+  "private": "true",
+  "description": "Resources for WoW",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npm run build:webpack",
+    "build:webpack": "webpack -p",
+    "start": "run-p start:**",
+    "start:hugo": "hugo serve",
+    "start:webpack": "webpack --progress --colors --watch"
+  },
+  "keywords": [
+    "wow",
+    "mplus",
+    "warcraft"
+  ],
+  "author": "David Moore",
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/core": "^7.7.0",
+    "@babel/preset-env": "^7.7.1",
+    "babel-loader": "^8.0.6",
+    "css-loader": "^3.2.0",
+    "cssnano": "^4.1.10",
+    "mini-css-extract-plugin": "^0.8.0",
+    "npm-run-all": "^4.1.5",
+    "postcss": "^7.0.21",
+    "postcss-cssnext": "^3.1.0",
+    "postcss-import": "^12.0.1",
+    "postcss-loader": "^3.0.0",
+    "style-loader": "^1.0.0",
+    "tachyons": "^4.11.1",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10"
+  },
+  "dependencies": {}
+}

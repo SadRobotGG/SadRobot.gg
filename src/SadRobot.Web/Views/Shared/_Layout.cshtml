@@ -1,0 +1,54 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1.0">
+    <meta name="robots" content="index, follow">
+    <title>@ViewData["Title"] - SadRobot.gg</title>
+    <link rel="stylesheet" href="~/app.css" />
+</head>
+<body class="ma0 sans-serif bg-primary-color-light">
+    <header>
+        <nav class="bg-primary-color-dark pv4 w-100" role="navigation">
+            <div class="center flex-ns flex-wrap items-center justify-between">
+
+                <div class="flex-ns">
+                    <h1 class="dim f3 lh-solid ml0-ns mr0 mr4-l mv0 pl3 pl4-ns">
+                        <a href="/" class="link white">SadRobot.gg</a>
+                    </h1>
+                    <ul class="list ma0 pa0 dn dib-l">
+                        <li class="f5 dib mr4" role="menuitem">
+                            <a asp-controller="Home" asp-action="Index" class="dim link primary-color">Home</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <ul class="flex-ns list ma0 pa0 dn dib-l">
+                    <li class="f5 dib mr4" role="menuitem">
+                        <a class="dim link light-silver" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+    <main role="main" class="content-with-sidebar min-vh-100 pb7 pb0-ns">
+        @RenderBody()
+    </main>
+
+    <footer class="bg-primary-color-dark ph4-ns pt3 relative w-100" role="contentinfo">
+        <div class="center flex-ns flex-wrap justify-between mw9 w-90">
+            <div class="pb3 pt4 w-100">
+                <div class="b f3  light-gray mb3 nested-links tc mb4">
+                    Copyright &copy; SadRobot.gg @DateTime.Now.Year
+                </div>
+                <p class="center f6 tc w-70">
+                    <a asp-area="" asp-controller="Home" asp-action="Privacy" class="mr3">Privacy</a>
+                </p>
+            </div>
+        </div>
+    </footer>
+    <script src="~/app.js" asp-append-version="true"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>
