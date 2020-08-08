@@ -1,0 +1,85 @@
+{{ define "main" }}
+{{ $currentPage := . }}
+  <article class="w-100 ph4 pb5 pb6-ns pt1 pt3-ns">
+    <div class="flex-l w-80-l">
+
+      <div class="order-2 w-100 w-20-l ph5-m ph0-l mb4">
+        <aside class="fixed-lTK right-0 f6 bl-l b--moon-gray pv4 pv0-ns ph4-l nested-list-reset nested-links nested-copy-line-height sticky">
+          {{ if not .Params.notoc }}
+            <p class="b">Contents</p>
+            {{ .TableOfContents }}
+          {{ end }}
+          {{- if or .PrevInSection .NextInSection -}}
+              <div date-pref>
+                {{if .NextInSection}}
+                  <a href="{{.NextInSection.Permalink }}" class="dib f6 pl1 hover-bg-light-gray br-100" title="{{ .NextInSection.Title }} ">
+                    {{ partial "svg/ic_chevron_left_black_24px.svg" (dict "fill" "#0594CB" "size" "30px") }}
+                  </a>
+                {{end}}
+
+                {{if .PrevInSection}}
+                  <a href="{{ .PrevInSection.Permalink }}" class="dib f6 pr1 hover-bg-light-gray br-100" title="{{ .PrevInSection.Title }}">
+                  {{ partial "svg/ic_chevron_right_black_24px.svg" (dict "fill" "#0594CB" "size" "30px") }}
+                  </a>
+                {{end}}
+              </div>
+          {{- end -}}
+        </aside>
+      </div>
+
+      <div class="order-1 w-60-l ph0 ph5-ns mid-gray nested-copy-line-height no-underline nested-copy-seperator nested-blockquote mt0-ns" style="flex-grow:1;">
+
+        {{if ne .Section "blog" }}
+          {{ partial "breadcrumbs.html" . }}
+        {{ end }}
+
+        <div class="documentation-copy nested-links">
+          <div id="readout" class="fixed right-0 bottom-0"></div>
+          
+          <header class="flex-none w-100">
+            
+            {{if .IsPage}}<aside class="fr f6 mid-gray dim ml3">{{ .ReadingTime }} min{{if ne .ReadingTime 1}}s{{end}} to read</aside>{{end}}
+
+            {{ if .Params.categories }}
+              {{ range .Params.categories }}
+                <a href="{{ "/categories/" | relLangURL }}{{ . | urlize }}" class="f6 fw8 mb0 link mid-gray dim mr3">
+                  {{ humanize  . | upper }}
+                </a>
+              {{ end }}
+            {{end}}
+
+            <h1 class="lh-title mb3 mv0 pt3 primary-color-dark">
+              {{- if eq .Section "functions" -}}
+                {{ .LinkTitle }}
+              {{- else -}}
+                {{ .Title }}
+              {{- end -}}
+            </h1>
+          </header>
+          
+          <aside class="bt bw1 pt3 mt2 mid-gray b--mid-gray fn w-100">
+            {{ with .Params.description }}
+              <div class="f4 fw4 lh-copy">
+                {{ . | markdownify }}
+              </div>
+            {{ end }}
+          </aside>
+          
+          {{ with .Params.featured_image_path }}
+            <img src="{{ . }}" alt="Featured Image for {{ $.Title }}" class="mw-100">
+          {{ end }}
+          
+          <div class="prose" id="prose">
+            {{ .Content }}
+          </div>
+
+        </div>
+      </div>
+
+      {{if ne .Section "blog" }}
+        {{ partial "wiki-nav.html" . }}
+      {{ end }}
+    </div>
+  </article>
+
+{{ end }}

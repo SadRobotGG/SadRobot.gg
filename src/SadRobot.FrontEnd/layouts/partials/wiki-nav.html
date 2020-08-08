@@ -1,0 +1,20 @@
+<div class="dn db-l w-20">
+    <nav role="navigation">
+      <ul class="list pa0 nl2">
+        {{ range .FirstSection.Sections.ByWeight }}
+          <li class="f5 w-100 hover-bg-light-gray hover-accent-color-light fw6">
+            <a href="{{.RelPermalink}}" class="js-toggle dib w-100 link mid-gray hover-accent-color-light pl2 pr2 pv2">{{ .Name }}</a>
+            <ul class="desktopmenu animated fadeIn list pl0 bg-light-gray">
+              {{- range .Sections }}
+              <li class="f6 fw4">
+                <a href="{{.RelPermalink}}" class="db link hover-bg-gray hover-white pl3 pr2 pv2">
+                  {{ .Name }}
+                </a>
+              </li>
+              {{- end}}
+            </ul>
+          </li>
+        {{- end}}
+      </ul>
+    </nav>
+  </div>

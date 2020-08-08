@@ -1,0 +1,30 @@
+:root {
+    --primary-color:        #F8B700;
+    --primary-color-dark:   #0A1922;
+    --primary-color-light:  #f9f9f9;
+    --accent-color:         #0594CB;
+    --accent-color-light:   #FF4088;
+    --accent-color-dark:    #33ba91;
+    --text-color-primary:   #ebdec2;
+    --text-on-primary-color: #fff;
+    --text-color-secondary: #ccc;
+    --text-color-disabled:  #F7f7f7;
+    --divider-color:        #f6f6f6;
+    --warn-color: red;
+  
+    --blue: var(--primary-color);
+
+    --deathknight:#c41e3b;
+    --demonhunter: #a330c9;
+    --druid:#ff7c0a;
+    --hunter:#aad372;
+    --mage:#68ccef;
+    --monk:#00ffba;
+    --paladin:#f48cba;
+    --priest:#f0ebe0;
+    --rogue:#fff468;
+    --shaman:#2359ff;
+    --warlock:#9382c9;
+    --warrior:#c69b6d;
+  }
+  

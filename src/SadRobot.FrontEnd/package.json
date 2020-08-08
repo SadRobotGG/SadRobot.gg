@@ -4,21 +4,6 @@
   "private": "true",
   "description": "Resources for WoW",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "npm run build:webpack",
-    "build:webpack": "webpack -p",
-    "start": "run-p start:**",
-    "start:hugo": "hugo serve",
-    "start:webpack": "webpack --progress --colors --watch"
-  },
-  "keywords": [
-    "wow",
-    "mplus",
-    "warcraft"
-  ],
-  "author": "David Moore",
-  "license": "MIT",
   "devDependencies": {
     "@babel/core": "^7.7.0",
     "@babel/preset-env": "^7.7.1",
@@ -36,5 +21,21 @@
     "webpack": "^4.41.2",
     "webpack-cli": "^3.3.10"
   },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npm run build:webpack && npm run build:hugo",
+    "build:hugo": "hugo",
+    "build:webpack": "webpack -p",
+    "start": "run-p start:**",
+    "start:hugo": "hugo serve",
+    "start:webpack": "webpack --progress --colors --watch"
+  },
+  "keywords": [
+    "wow",
+    "mplus",
+    "warcraft"
+  ],
+  "author": "David Moore",
+  "license": "MIT",
   "dependencies": {}
 }

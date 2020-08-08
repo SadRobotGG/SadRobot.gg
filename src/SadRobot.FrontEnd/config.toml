@@ -1,0 +1,67 @@
+baseURL = "https://sadrobot.gg/"
+defaultContentLanguage = "en"
+enableEmoji = true
+languageCode = "en-us"
+title = "SadRobot.gg"
+pluralizeListTitles = false
+disableAliases = false
+pygmentsCodeFences = true
+pygmentsStyle="monokaidark"
+enableGitInfo = true
+enableinlineshortcodes = false
+paginate =  20
+ignorecache = false
+
+[taxonomies]
+  category = "categories"
+  tag = "tags"
+  expansion = "expansions"
+
+[outputs]
+home = [ "HTML", "RSS"]
+section = [ "HTML", "RSS"]
+page = ["HTML"]
+
+[related]
+threshold = 80
+includeNewer = true
+toLower = false
+
+[[related.indices]]
+name = "keywords"
+weight = 100
+[[related.indices]]
+name  = "date"
+weight = 10
+pattern = "2006"
+
+[social]
+twitter = "sadrobot_gg"
+
+[params]
+flex_box_interior_classes = "flex-auto w-100 w-40-l mr3 mb3 bg-white ba b--moon-gray nested-copy-line-height"
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = false
+
+[[menu.global]]
+name = "Blog"
+weight = 1
+identifier = "blog"
+url = "/blog/"
+
+[[menu.global]]
+name = "Wiki"
+weight = 5
+identifier = "wiki"
+url = "/wiki/"
+
+[[menu.external]]
+name = "GitHub"
+weight = 200
+icon = true
+identifier = "github"
+post = "external"
+url = "https://github.com/SadRobotGG/SadRobot.gg"

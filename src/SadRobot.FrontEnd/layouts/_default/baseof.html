@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html class="no-js" lang="{{ with $.Site.LanguageCode }}{{ . }}{{ else }}en-us{{ end }}">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,minimum-scale=1">
+    <title>{{ block "title" . }}{{ with .Title }}{{ . }} | {{ end }}{{ .Site.Title }}{{ end }}</title>
+    <link rel="preload" href="{{ "fonts/muli-latin-200.woff2" | absURL }}" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="{{ "fonts/muli-latin-400.woff2" | absURL }}" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="{{ "fonts/muli-latin-800.woff2" | absURL }}" as="font" type="font/woff2" crossorigin>
+    <meta name="robots" content="index, follow">
+    {{ range .AlternativeOutputFormats -}}
+    <link rel="{{ .Rel }}" type="{{ .MediaType.Type }}" href="{{ .Permalink | safeURL }}">
+    {{ end -}}    
+    {{ $isDev := eq hugo.Environment "development" }}
+    {{ $stylesheet := resources.Get "app.css"  }}
+    {{ if not $isDev }}
+    {{ $stylesheet = $stylesheet | minify | fingerprint }}
+    {{ end }}
+    {{ with $stylesheet }}
+      {{ if $isDev }}
+      <link rel="stylesheet" href="{{ .RelPermalink }}"  crossorigin="anonymous">
+      {{ else }}
+      <link rel="stylesheet" href="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" crossorigin="anonymous">
+      {{ end }}
+      {{ $.Scratch.Set "stylesheet" . }}    
+    {{end}}
+
+
+  {{ block "scripts" . }}
+    {{ $scripts := resources.Get "app.js" }}
+    {{ $isDev := eq hugo.Environment "development" }}
+    {{ if not $isDev }}
+      {{ $scripts = $scripts | fingerprint }}
+    {{ end }}
+    {{ with $scripts }}
+      {{ if  $isDev }}
+      <script type="text/javascript" src="{{ .RelPermalink }}" crossorigin="anonymous" defer></script>
+      {{ else }}
+      <script type="text/javascript" src="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" crossorigin="anonymous" defer></script>
+      {{ end }}
+      {{ $.Scratch.Set "scripts" . }}    
+    {{end}}
+  {{ end }}
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
+  <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#0594cb">
+  <meta name="theme-color" content="#ffffff">
+  {{- template "_internal/opengraph.html" . -}}
+  {{- template "_internal/schema.html" . -}}
+  {{- template "_internal/twitter_cards.html" . -}}
+
+  </head>
+  <body class="ma0 sans-serif text-color-primary bg-primary-color-dark{{ with getenv "HUGO_ENV" }} {{ . }}{{ end }}">
+    {{ block "nav" . }}
+    {{ $currentPage := . }}
+    <nav class="bg-primary-color-dark pv4 w-100" role="navigation">
+      <div class="center flex-ns flex-wrap items-center justify-between mw9">
+        
+        <div class="flex-ns">
+          <h1 class="dim f3 lh-solid ml0-ns mr0 mr4-l mv0 pl3 pl4-ns">
+            <a href="{{ .Site.BaseURL }}" class="link primary-color">{{ .Site.Title }}</a>
+          </h1>
+          <ul class="list ma0 pa0 dn dib-l">
+            {{ range .Site.Menus.global }}
+              <li class="f5 dib mr4" role="menuitem">
+                <a href="{{.URL}}" class="dim link{{ if eq $currentPage.Section .Identifier }} primary-color {{else}} light-silver{{ end }}">{{ .Name }}</a>
+              </li>
+            {{ end }}
+          </ul>
+        </div>
+
+        <ul class="flex-ns list ma0 pa0 dn dib-l">
+          {{ range .Site.Menus.external }}
+            <li class="f5 dib mr4" role="menuitem">
+              <a href="{{.URL}}" class="dim link light-silver" target="_blank">
+                {{ .Name }}<span class="pl1">{{ partial "svg/link-ext.svg" (dict "size" "10") }}</span>
+              </a>
+            </li>
+          {{ end }}
+        </ul>
+
+        <!-- <span class="absolute mt1 mt2-l pr3 right-0 top-0">
+          {{ partial "svg/github-squared.svg" (dict "fill" "gray" "width" "32" "height" "36") }}
+        </span> -->
+    
+      </div>
+    </nav>    
+    {{ end }}
+    {{ block "header" . }}{{ end }}
+    <main role="main" class="content-with-sidebar min-vh-100 pb7 pb0-ns">
+      {{ block "main" . }}{{ end }}
+    </main>
+
+    {{ block "footer" . }}    
+    <footer class="bg-primary-color-dark ph4-ns pt3 relative w-100" role="contentinfo">
+        <div class="center flex-ns flex-wrap justify-between mw9 w-90">
+          <div class="pb3 pt4 w-100">
+            <div class="b f3  light-gray mb3 nested-links tc mb4">
+              Copyright &copy; David Moore {{ now.Year }}
+              </div>
+              <p class="center f6 tc w-70">
+                <a href="https://www.netlify.com" target="_blank" class="mr3" title="Deploys to Netlify"><img src="/images/netlify-dark.svg" alt="Netlify badge"></a>
+                <!-- <a href="https://www.netlify.com" target="_blank" class="mr3" title="Deploys to Netlify"><img src="https://api.netlify.com/api/v1/badges/c61652af-16dc-4735-b33c-9da9e48b78b3/deploy-status" alt="Netlify badge"></a> -->
+
+                <a href="https://gohugo.io" target="_blank" title="Built with Hugo"><img class="w4" src="/images/hugo-logo-wide.svg" alt="Built with Hugo"></a>
+              </p>
+          </div>  
+        </div>  
+    </footer>
+    {{ end }}
+
+  </body>
+</html>

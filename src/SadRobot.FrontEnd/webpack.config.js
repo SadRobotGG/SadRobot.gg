@@ -4,7 +4,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports = {
     entry: {
-        app: "./app/index.js"
+    app: "./src/index.js"
     },
     module: {
         rules: [
@@ -39,12 +39,12 @@ module.exports = {
     },
 
     output: {
-        path: path.join(__dirname, "./wwwroot"),
+    path: path.join(__dirname, "./assets"),
         filename: "[name].js"
     },
 
     resolve: {
-        modules: [path.resolve(__dirname, "app"), "node_modules"]
+    modules: [path.resolve(__dirname, "src"), "node_modules"]
     },
 
     plugins: [
