@@ -13,4 +13,10 @@
     <PackageReference Include="coverlet.collector" Version="1.2.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\SadRobot.Cmd\SadRobot.Cmd.csproj" />
+    <ProjectReference Include="..\..\src\SadRobot.Core\SadRobot.Core.csproj" />
+    <ProjectReference Include="..\..\src\SadRobot.Functions\SadRobot.Functions.csproj" />
+  </ItemGroup>
+
 </Project>

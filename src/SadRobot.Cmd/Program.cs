@@ -4,24 +4,43 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using CASCLib;
 using Microsoft.Data.SqlClient;
 using Newtonsoft.Json;
 using SadRobot.Cmd.Commandlet;
+using SadRobot.Cmd.Commandlet.BlizzardApi;
+using SadRobot.Cmd.Commandlet.Markdown;
 using SadRobot.Core.Models;
 
 namespace SadRobot.Cmd
 {
-    class Program
+    static class Program
     {
         static async Task Main(string[] args)
         {
-            var cmd = args.Length == 0 ? "json" : args[0].Trim().ToLowerInvariant();
+            using var cancellationToken = new CancellationTokenSource();
+
+            Console.CancelKeyPress += (sender, eventArgs) =>
+            { 
+                // ReSharper disable AccessToDisposedClosure
+                if (!cancellationToken.IsCancellationRequested) cancellationToken.Cancel();
+                // ReSharper restore AccessToDisposedClosure
+            };
+            
+            var cmd = args.Length == 0 ? "markdown" : args[0].Trim().ToLowerInvariant();
             var search = args.Length < 2 ? "18452" : args[1].Trim();
+
+            var commandletArgs = args.Skip(1).ToArray();
 
             switch (cmd)
             {
+                case "blizzard":
+                    var commandlet = new BlizzardApiCommandlet(commandletArgs, cancellationToken.Token);
+                    await commandlet.Execute();
+                    break;
+
                 case "caches":
                     await ScanCache.Execute();
                     break;
@@ -61,7 +80,8 @@ namespace SadRobot.Cmd
                     break;
 
                 case "markdown":
-                    await GenerateMarkdown();
+                    var markdown = new MarkdownCommandlet(commandletArgs, cancellationToken.Token);
+                    await markdown.Execute();
                     break;
 
                 case "json":
@@ -265,82 +285,6 @@ ORDER BY OrderIndex";
             return null;
         }
 
-        static async Task GenerateMarkdown()
-        {
-            var tiers = await ReadJson<IList<WowExpansion>>("tiers.json");
-            var instances = await ReadJson<IList<Instance>>("instances.json");
-            var keystones = await ReadJson<IList<MythicKeystone>>("keystones.json");
-
-            var contentDir = new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, "content\\wow\\keystone"));
-            if(!contentDir.Exists) contentDir.Create();
-
-            foreach (var tier in tiers)
-            {
-                var tierDir = new DirectoryInfo(Path.Combine(contentDir.FullName, tier.Slug));
-
-                foreach(var keystone in keystones)
-                {
-                    // Get matching dungeon
-                    var instance = instances.Single(x => x.MapId == keystone.MapId);
-
-                    // Skip if it's for the wrong tier
-                    if (instance.TierId != tier.TierId) continue;
-
-                    // Create the keystone content directory
-                    var keystoneDir = new DirectoryInfo(Path.Combine(tierDir.FullName, keystone.Slug));
-                    if (!keystoneDir.Exists) keystoneDir.Create();
-
-                    // Create the index
-                    var sb = new StringBuilder();
-
-                    sb.AppendLine("---")
-                        .AppendLine("title: \"" + keystone.Name + "\"")
-                        .AppendLine("description: \"" + instance.Description + "\"")
-                        .AppendLine("instance: " + instance.Id)
-                        .AppendLine("imgXl: " + instance.BackgroundImageId)
-                        .AppendLine("imgLg: " + instance.LoreImageId)
-                        .AppendLine("imgSm: " + instance.ButtonImageId)
-                        .AppendLine("imgXs: " + instance.ButtonSmallImageId)
-                        .AppendLine("map: " + instance.MapId)
-                        .AppendLine("---")
-                        .AppendLine()
-                        .AppendLine("# " + keystone.Name)
-                        ;
-
-                    await File.WriteAllTextAsync(Path.Combine(keystoneDir.FullName, "_index.md"), sb.ToString(),
-                        Encoding.UTF8);
-
-                    // Create a page for each encounter
-                    foreach (var encounter in instance.Encounters.OrderBy(x => x.Order))
-                    {
-                        var esb = new StringBuilder();
-
-                        esb.AppendLine("---")
-                            .AppendLine($"title: \"{encounter.Name}\"")
-                            .AppendLine($"description: \"" + encounter.Description.Replace("\"", "\\\"") + $"\"")
-                            .AppendLine($"encounterId: \"{encounter.EncounterId}\"")
-                            .AppendLine($"uiMapId: \"{encounter.UiMapId}\"")
-                            .AppendLine("weight: " + encounter.Order)
-                            .AppendLine("---")
-                            .AppendLine()
-                            .AppendLine($"## {encounter.Name}")
-                            .AppendLine()
-                            .AppendLine($"{encounter.Description}");
-
-                        if (encounter.Sections.Count > 0) esb.AppendLine("");
-
-                        foreach (var section in encounter.Sections)
-                        {
-                            esb.AppendLine($"* {section.Name}");
-                        }
-
-                        var slug = string.IsNullOrWhiteSpace(encounter.Slug) ? GetSlug(encounter.Name) : encounter.Slug;
-
-                        await File.WriteAllTextAsync(Path.Combine(keystoneDir.FullName, slug + ".md"), esb.ToString(), Encoding.UTF8);
-                    }
-                }
-            }
-        }
 
         static LocaleFlags GetLocale(string locale)
         {
@@ -551,7 +495,7 @@ ORDER BY OrderIndex";
             await File.WriteAllTextAsync(Path.Combine(Environment.CurrentDirectory, filename), json, SerializationHelpers.Utf8NoBom);
         }
 
-        static async Task<T> ReadJson<T>(string filename)
+        internal static async Task<T> ReadJson<T>(string filename)
         {
             var json = await File.ReadAllTextAsync(Path.Combine(Environment.CurrentDirectory, filename));
             return JsonConvert.DeserializeObject<T>(json, SerializationHelpers.JsonSettings);
@@ -559,7 +503,7 @@ ORDER BY OrderIndex";
 
         static readonly Regex slugRegex = new Regex("[^a-zA-Z0-9\\-]");
 
-        static string GetSlug(string name)
+        internal static string GetSlug(string name)
         {
             return slugRegex.Replace(name.ToLowerInvariant().Replace(" ", "-"), "");
         }
