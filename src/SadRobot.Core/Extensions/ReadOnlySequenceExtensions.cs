@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Buffers;
+using System.Runtime.CompilerServices;
 using System.Text;
-using System.Xml;
 
 namespace SadRobot.Core.Extensions
 {
@@ -28,6 +28,16 @@ namespace SadRobot.Core.Extensions
         public static string ToStringUtf8(this ReadOnlySequence<byte> buffer)
         {
             return ToString(buffer, Encoding.UTF8);
+        }
+
+        public static string ToUtf8String(this ReadOnlySpan<byte> span)
+        {
+            return ToString(span, Encoding.UTF8);
+        }
+
+        public static string ToString(this ReadOnlySpan<byte> span, Encoding encoding)
+        {
+            return encoding.GetString(span);
         }
 
         public static bool TryReadTo<T>(this ReadOnlySequence<T> buffer, ref ReadOnlySpan<T> value, out ReadOnlySequence<T> result) where T : unmanaged, IEquatable<T>
@@ -59,6 +69,59 @@ namespace SadRobot.Core.Extensions
             }
 
             return reader.Sequence.Slice(0, reader.Position);
+        }
+
+        public delegate void ReadOnlySpanAction<T>(ReadOnlySpan<T> span);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void ProcessLine(this ReadOnlySequence<byte> buffer, ReadOnlySpanAction<byte> action, bool readToEnd = false)
+        {
+            const byte newline = (byte) '\n';
+            const byte carriageReturn = (byte) '\r';
+
+            if (buffer.IsSingleSegment)
+            {
+                var span = buffer.FirstSpan;
+                while (span.Length > 0)
+                {
+                    var newLine = span.IndexOf(newline);
+                    
+                    if (newLine == -1 && !readToEnd) break;
+
+                    // If there is no newline found, just read to the end.
+                    var line = span.Slice(0, newLine == -1 ? span.Length : newLine);
+                    
+                    // If we did find a newline character, then make sure we count it as a consume character
+                    var consumed = line.Length;
+                    if (newLine > -1) consumed++;
+
+                    // Trim carriage return from the end
+                    if (line[^1] == carriageReturn) line = line[..^1];
+
+                    action(line);
+                    
+                    span = span.Slice(consumed);
+                    buffer = buffer.Slice(consumed);
+                }
+            }
+            else
+            {
+                var sequenceReader = new SequenceReader<byte>(buffer);
+
+                while (!sequenceReader.End)
+                {
+                    while (sequenceReader.TryReadTo(out ReadOnlySpan<byte> line, newline))
+                    {
+                        if (line[^1] == carriageReturn) line = line[..^1]; // Trim trailing carriage return
+                        action(line);
+                    }
+
+                    if (readToEnd) action(sequenceReader.UnreadSpan);
+
+                    buffer = buffer.Slice(sequenceReader.Position);
+                    sequenceReader.Advance(buffer.Length);
+                }
+            }
         }
     }
 }
