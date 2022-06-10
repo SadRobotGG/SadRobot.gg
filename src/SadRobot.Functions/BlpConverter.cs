@@ -15,7 +15,6 @@ namespace SadRobot.Functions
 
             using (var blp = new BlpFile(input))
             using (var image = blp.GetImage(0))
-            using (var file = new MemoryStream())
             {
                 image.SaveAsPng(output);
             }
