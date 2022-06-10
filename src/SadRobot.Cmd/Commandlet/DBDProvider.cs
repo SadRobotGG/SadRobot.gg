@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using SadRobot.Cmd.DBCD.DBDefsLib;
-using SadRobot.Cmd.DBCD.Providers;
+using DBCD.Providers;
+using DBDefsLib;
 
 namespace SadRobot.Cmd.Commandlet
 {

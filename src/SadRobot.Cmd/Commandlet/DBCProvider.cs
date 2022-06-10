@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using SadRobot.Cmd.DBCD.Providers;
+using DBCD.Providers;
 
 namespace SadRobot.Cmd.Commandlet
 {
