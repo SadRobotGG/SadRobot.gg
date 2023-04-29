@@ -1,9 +1,0 @@
-[submodule "lib/DBCD"]
-	path = lib/DBCD
-	url = https://github.com/wowdev/DBCD.git
-[submodule "lib/WoWDBDefs"]
-	path = lib/WoWDBDefs
-	url = https://github.com/wowdev/WoWDBDefs.git
-[submodule "lib/DBDefsLib"]
-	path = lib/DBDefsLib
-	url = https://github.com/wowdev/DBDefsLib.git
